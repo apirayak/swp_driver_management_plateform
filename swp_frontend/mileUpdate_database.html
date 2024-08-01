@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>การอัพเดทเลขไมล์</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffe6f2;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 95%;
+            max-width: 1200px;
+            box-sizing: border-box;
+        }
+        h2 {
+            text-align: center;
+            color: #ff66a3;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #ff66a3;
+            color: white;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+        .buttons button {
+            background-color: #ff66a3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .buttons button:hover {
+            background-color: #ff3385;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            table, th, td {
+                font-size: 0.9em;
+            }
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            table, th, td {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>การอัพเดทเลขไมล์</h2>
+        <div class="form-group">
+            <label for="dateRange">เลือกช่วงวันที่</label>
+            <select id="dateRange" name="dateRange">
+                <!-- Date ranges will be populated dynamically -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="month">เลือกเดือน</label>
+            <select id="month" name="month">
+                <option value="01">มกราคม</option>
+                <option value="02">กุมภาพันธ์</option>
+                <option value="03">มีนาคม</option>
+                <option value="04">เมษายน</option>
+                <option value="05">พฤษภาคม</option>
+                <option value="06">มิถุนายน</option>
+                <option value="07">กรกฎาคม</option>
+                <option value="08">สิงหาคม</option>
+                <option value="09">กันยายน</option>
+                <option value="10">ตุลาคม</option>
+                <option value="11">พฤศจิกายน</option>
+                <option value="12">ธันวาคม</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="year">เลือกปี</label>
+            <select id="year" name="year">
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <!-- Add more years as needed -->
+            </select>
+        </div>
+        <div class="buttons">
+            <button type="button" onclick="confirmSelection()">ยืนยัน</button>
+        </div>
+        <div id="resultsContainer" style="display: none;">
+            <table id="mileTable">
+                <thead>
+                    <tr>
+                        <th>ทะเบียนรถ</th>
+                        <th>เลขไมล์</th>
+                        <th>รายละเอียด</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be generated here by JavaScript -->
+                </tbody>
+            </table>
+            <div class="buttons">
+                <button type="button" onclick="downloadData()">ดาวน์โหลดข้อมูล</button>
+                <button type="button" onclick="viewDetails()">ดูรายละเอียด</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.sheetjs.com/xlsx-latest/xlsx.full.min.js"></script>
+    <script>
+        const daysInMonth = {
+            '01': 31, '02': 28, '03': 31, '04': 30, '05': 31, '06': 30,
+            '07': 31, '08': 31, '09': 30, '10': 31, '11': 30, '12': 31
+        };
+
+        function updateDateRanges() {
+            const month = document.getElementById('month').value;
+            const dateRangeSelect = document.getElementById('dateRange');
+            const numDays = daysInMonth[month];
+
+            dateRangeSelect.innerHTML = ''; // Clear existing options
+
+            // Populate date ranges based on the number of days in the selected month
+            dateRangeSelect.add(new Option('1-15', '1-15'));
+            if (numDays > 15) {
+                dateRangeSelect.add(new Option('16-' + numDays, '16-' + numDays));
+            }
+        }
+
+        function confirmSelection() {
+            const dateRange = document.getElementById('dateRange').value;
+            const month = document.getElementById('month').value;
+            const year = document.getElementById('year').value;
+
+            // Show results based on selected filters
+            // Here you would fetch and display data from your database
+            // For now, we'll just simulate data
+
+            const tableBody = document.querySelector('#mileTable tbody');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            // Simulated data
+            const simulatedData = [
+                { regNumber: 'ABC123', mileage: '12345 km' },
+                { regNumber: 'XYZ789', mileage: '67890 km' }
+            ];
+
+            simulatedData.forEach(data => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${data.regNumber}</td>
+                    <td>${data.mileage}</td>
+                    <td><button onclick="viewDetails('${data.regNumber}')">ดูรายละเอียด</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            document.getElementById('resultsContainer').style.display = 'block';
+        }
+
+        function downloadData() {
+            const dateRange = document.getElementById('dateRange').value;
+            const month = document.getElementById('month').value;
+            const year = document.getElementById('year').value;
+
+            // Collect table data
+            const table = document.getElementById('mileTable');
+            const rows = Array.from(table.querySelectorAll('tbody tr'));
+
+            // Create a workbook and a worksheet
+            const wb = XLSX.utils.book_new();
+            const wsData = [['ช่วงวันที่', 'เดือน', 'ปี', 'ทะเบียนรถ', 'เลขไมล์']];
+
+            rows.forEach(row => {
+                const cells = Array.from(row.querySelectorAll('td'));
+                const regNumber = cells[0].textContent;
+                const mileage = cells[1].textContent;
+                wsData.push([dateRange, month, year, regNumber, mileage]);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            XLSX.utils.book_append_sheet(wb, ws, 'Mileage Data');
+
+            // Generate a file name
+            const fileName = `mileUpdate_${month}_${year}_${dateRange}.xlsx`;
+
+            // Write the workbook to a file
+            XLSX.writeFile(wb, fileName);
+        }
+
+        function viewDetails(regNumber) {
+            // Redirect to the details page with the regNumber as a query parameter
+            window.location.href = `mileDetails.html?regNumber=${regNumber}`;
+        }
+
+        // Initialize date ranges with default values
+        window.onload = () => {
+            updateDateRanges();
+        };
+
+        // Update date ranges when month is changed
+        document.getElementById('month').addEventListener('change', updateDateRanges);
+    </script>
+</body>
+</html>

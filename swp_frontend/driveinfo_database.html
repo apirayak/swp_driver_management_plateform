@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ข้อมูลคนขับรถ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffe6f2;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 95%;
+            max-width: 1200px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        h2 {
+            color: #ff66a3;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #ff66a3;
+            color: white;
+        }
+        .hidden {
+            display: none;
+        }
+        .download-button {
+            background-color: #ff66a3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .download-button:hover {
+            background-color: #ff3385;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            table, th, td {
+                font-size: 0.9em;
+            }
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            table, th, td {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>ข้อมูลคนขับรถ</h2>
+        <div class="form-group">
+            <input type="text" id="searchBox" placeholder="ค้นหาข้อมูลคนขับรถ" onkeyup="searchTable()">
+        </div>
+        <table id="driverTable">
+            <thead>
+                <tr>
+                    <th>ชื่อ</th>
+                    <th>นามสกุล</th>
+                    <th class="hidden">คลัง</th>
+                    <th class="hidden">ทะเบียนรถ</th>
+                    <th>เลขบัตรประจำตัวประชาชน</th>
+                    <th class="hidden">ที่อยู่ตามบัตรประชาชน</th>
+                    <th class="hidden">ที่อยู่ปัจจุบัน</th>
+                    <th class="hidden">ธนาคาร</th>
+                    <th class="hidden">เลขบัญชีธนาคาร</th>
+                    <th class="hidden">ภาพบัตรประจำตัวประชาชน</th>
+                    <th class="hidden">ภาพใบขับขี่</th>
+                    <th class="hidden">ภาพถ่ายคู่กับรถ</th>
+                    <th class="hidden">ภาพหน้าตรง</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Driver data will be populated here by JavaScript -->
+            </tbody>
+        </table>
+        <button class="download-button" onclick="downloadExcel()">ดาวน์โหลดข้อมูลเป็น Excel</button>
+    </div>
+
+    <script>
+        // Sample data
+        const drivers = [
+            {
+                firstName: 'John', lastName: 'Doe', warehouse: 'Warehouse 1', carRegistration: 'ABC123',
+                idNumber: '1234567890123', addressCard: '123 Main St', currentAddress: '456 Elm St',
+                bank: 'Bank A', bankAccount: '9876543210', idCardImage: 'idcard.jpg',
+                licenseImage: 'license.jpg', carImage: 'car.jpg', portraitImage: 'portrait.jpg'
+            },
+            {
+                firstName: 'Jane', lastName: 'Smith', warehouse: 'Warehouse 2', carRegistration: 'XYZ789',
+                idNumber: '9876543210987', addressCard: '789 Oak St', currentAddress: '321 Pine St',
+                bank: 'Bank B', bankAccount: '1234567890', idCardImage: 'idcard2.jpg',
+                licenseImage: 'license2.jpg', carImage: 'car2.jpg', portraitImage: 'portrait2.jpg'
+            },
+            // Add more sample data as needed
+        ];
+
+        function populateDriverTable() {
+            const tableBody = document.getElementById('driverTable').querySelector('tbody');
+            tableBody.innerHTML = '';
+
+            drivers.forEach(driver => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${driver.firstName}</td>
+                    <td>${driver.lastName}</td>
+                    <td class="hidden">${driver.warehouse}</td>
+                    <td class="hidden">${driver.carRegistration}</td>
+                    <td>${driver.idNumber}</td>
+                    <td class="hidden">${driver.addressCard}</td>
+                    <td class="hidden">${driver.currentAddress}</td>
+                    <td class="hidden">${driver.bank}</td>
+                    <td class="hidden">${driver.bankAccount}</td>
+                    <td class="hidden"><img src="${driver.idCardImage}" alt="ID Card"></td>
+                    <td class="hidden"><img src="${driver.licenseImage}" alt="License"></td>
+                    <td class="hidden"><img src="${driver.carImage}" alt="Car"></td>
+                    <td class="hidden"><img src="${driver.portraitImage}" alt="Portrait"></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function searchTable() {
+        const searchBox = document.getElementById('searchBox');
+        const filter = searchBox.value.toLowerCase();
+        const table = document.getElementById('driverTable');
+        const tr = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < tr.length; i++) {
+            const td = tr[i].getElementsByTagName('td');
+            let displayRow = false;
+            
+            for (let j = 0; j < td.length; j++) {
+                const cellValue = td[j].innerText.toLowerCase();
+                if (cellValue.includes(filter)) {
+                    displayRow = true;
+                    const highlightedValue = td[j].innerText.replace(new RegExp(filter, 'gi'), match => `<span style="background-color: yellow;">${match}</span>`);
+                    td[j].innerHTML = highlightedValue;
+                } else {
+                    td[j].innerHTML = td[j].innerText; // Reset non-matched cells
+                }
+            }
+            tr[i].style.display = displayRow ? '' : 'none';
+        }
+    }
+
+    function downloadExcel() {
+        const exportData = drivers.map(driver => ({
+            'ชื่อ': driver.firstName,
+            'นามสกุล': driver.lastName,
+            'คลัง': driver.warehouse,
+            'ทะเบียนรถ': driver.carRegistration,
+            'เลขบัตรประจำตัวประชาชน': driver.idNumber,
+            'ที่อยู่ตามบัตรประชาชน': driver.addressCard,
+            'ที่อยู่ปัจจุบัน': driver.currentAddress,
+            'ธนาคาร': driver.bank,
+            'เลขบัญชีธนาคาร': driver.bankAccount,
+            'ภาพถ่ายบัตรประจำตัวประชาชน': driver.idCardImage,
+            'ภาพถ่ายใบขับขี่': driver.licenseImage,
+            'ภาพถ่ายคู่กับรถ': driver.carImage,
+            'ภาพหน้าตรง': driver.portraitImage
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(exportData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Drivers');
+
+        // Set column widths to fit the data
+        const maxLengths = exportData.reduce((acc, row) => {
+            Object.keys(row).forEach((key, index) => {
+                acc[index] = Math.max(acc[index] || 0, row[key] ? row[key].toString().length : 0);
+            });
+            return acc;
+        }, []);
+
+        const wscols = maxLengths.map(len => ({ wch: len + 2 }));
+        worksheet['!cols'] = wscols;
+
+        // Add hyperlinks for image URLs
+        exportData.forEach((_, rowIndex) => {
+            ['ภาพถ่ายบัตรประจำตัวประชาชน', 'ภาพถ่ายใบขับขี่', 'ภาพถ่ายคู่กับรถ', 'ภาพหน้าตรง'].forEach((column, colIndex) => {
+                const cellRef = XLSX.utils.encode_cell({ r: rowIndex + 1, c: colIndex + Object.keys(exportData[0]).length - 4 });
+                if (exportData[rowIndex][column]) {
+                    worksheet[cellRef] = { t: 's', v: exportData[rowIndex][column], l: { Target: exportData[rowIndex][column], Tooltip: 'Click to view image' } };
+                }
+            });
+        });
+
+        XLSX.writeFile(workbook, 'ข้อมูลพนักงานคนชับ.xlsx');
+    }
+
+        // Populate table on page load
+        window.onload = populateDriverTable;
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
+</body>
+</html>
