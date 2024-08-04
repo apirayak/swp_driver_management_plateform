@@ -84,6 +84,23 @@
                 font-size: 0.8em;
             }
         }
+        /* Samsung Galaxy S8/S9/S10/S20, Note 8/9/10/20, etc. */
+        @media only screen and (max-device-width: 360px) {
+            .container {
+                padding: 8px;
+            }
+            table, th, td {
+                font-size: 0.75em;
+                padding: 5px;
+            }
+            .download-button {
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+            h2 {
+                font-size: 1.5em;
+            }
+        }
     </style>
 </head>
 <body>
@@ -161,73 +178,73 @@
         }
 
         function searchTable() {
-        const searchBox = document.getElementById('searchBox');
-        const filter = searchBox.value.toLowerCase();
-        const table = document.getElementById('driverTable');
-        const tr = table.getElementsByTagName('tr');
+            const searchBox = document.getElementById('searchBox');
+            const filter = searchBox.value.toLowerCase();
+            const table = document.getElementById('driverTable');
+            const tr = table.getElementsByTagName('tr');
 
-        for (let i = 1; i < tr.length; i++) {
-            const td = tr[i].getElementsByTagName('td');
-            let displayRow = false;
-            
-            for (let j = 0; j < td.length; j++) {
-                const cellValue = td[j].innerText.toLowerCase();
-                if (cellValue.includes(filter)) {
-                    displayRow = true;
-                    const highlightedValue = td[j].innerText.replace(new RegExp(filter, 'gi'), match => `<span style="background-color: yellow;">${match}</span>`);
-                    td[j].innerHTML = highlightedValue;
-                } else {
-                    td[j].innerHTML = td[j].innerText; // Reset non-matched cells
+            for (let i = 1; i < tr.length; i++) {
+                const td = tr[i].getElementsByTagName('td');
+                let displayRow = false;
+                
+                for (let j = 0; j < td.length; j++) {
+                    const cellValue = td[j].innerText.toLowerCase();
+                    if (cellValue.includes(filter)) {
+                        displayRow = true;
+                        const highlightedValue = td[j].innerText.replace(new RegExp(filter, 'gi'), match => `<span style="background-color: yellow;">${match}</span>`);
+                        td[j].innerHTML = highlightedValue;
+                    } else {
+                        td[j].innerHTML = td[j].innerText; // Reset non-matched cells
+                    }
                 }
+                tr[i].style.display = displayRow ? '' : 'none';
             }
-            tr[i].style.display = displayRow ? '' : 'none';
         }
-    }
 
-    function downloadExcel() {
-        const exportData = drivers.map(driver => ({
-            'ชื่อ': driver.firstName,
-            'นามสกุล': driver.lastName,
-            'คลัง': driver.warehouse,
-            'ทะเบียนรถ': driver.carRegistration,
-            'เลขบัตรประจำตัวประชาชน': driver.idNumber,
-            'ที่อยู่ตามบัตรประชาชน': driver.addressCard,
-            'ที่อยู่ปัจจุบัน': driver.currentAddress,
-            'ธนาคาร': driver.bank,
-            'เลขบัญชีธนาคาร': driver.bankAccount,
-            'ภาพถ่ายบัตรประจำตัวประชาชน': driver.idCardImage,
-            'ภาพถ่ายใบขับขี่': driver.licenseImage,
-            'ภาพถ่ายคู่กับรถ': driver.carImage,
-            'ภาพหน้าตรง': driver.portraitImage
-        }));
+        function downloadExcel() {
+            const exportData = drivers.map(driver => ({
+                'ชื่อ': driver.firstName,
+                'นามสกุล': driver.lastName,
+                'คลัง': driver.warehouse,
+                'ทะเบียนรถ': driver.carRegistration,
+                'เลขบัตรประจำตัวประชาชน': driver.idNumber,
+                'ที่อยู่ตามบัตรประชาชน': driver.addressCard,
+                'ที่อยู่ปัจจุบัน': driver.currentAddress,
+                'ธนาคาร': driver.bank,
+                'เลขบัญชีธนาคาร': driver.bankAccount,
+                'ภาพถ่ายบัตรประจำตัวประชาชน': driver.idCardImage,
+                'ภาพถ่ายใบขับขี่': driver.licenseImage,
+                'ภาพถ่ายคู่กับรถ': driver.carImage,
+                'ภาพหน้าตรง': driver.portraitImage
+            }));
 
-        const worksheet = XLSX.utils.json_to_sheet(exportData);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Drivers');
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Drivers');
 
-        // Set column widths to fit the data
-        const maxLengths = exportData.reduce((acc, row) => {
-            Object.keys(row).forEach((key, index) => {
-                acc[index] = Math.max(acc[index] || 0, row[key] ? row[key].toString().length : 0);
+            // Set column widths to fit the data
+            const maxLengths = exportData.reduce((acc, row) => {
+                Object.keys(row).forEach((key, index) => {
+                    acc[index] = Math.max(acc[index] || 0, row[key] ? row[key].toString().length : 0);
+                });
+                return acc;
+            }, []);
+
+            const wscols = maxLengths.map(len => ({ wch: len + 2 }));
+            worksheet['!cols'] = wscols;
+
+            // Add hyperlinks for image URLs
+            exportData.forEach((_, rowIndex) => {
+                ['ภาพถ่ายบัตรประจำตัวประชาชน', 'ภาพถ่ายใบขับขี่', 'ภาพถ่ายคู่กับรถ', 'ภาพหน้าตรง'].forEach((column, colIndex) => {
+                    const cellRef = XLSX.utils.encode_cell({ r: rowIndex + 1, c: colIndex + Object.keys(exportData[0]).length - 4 });
+                    if (exportData[rowIndex][column]) {
+                        worksheet[cellRef] = { t: 's', v: exportData[rowIndex][column], l: { Target: exportData[rowIndex][column], Tooltip: 'Click to view image' } };
+                    }
+                });
             });
-            return acc;
-        }, []);
 
-        const wscols = maxLengths.map(len => ({ wch: len + 2 }));
-        worksheet['!cols'] = wscols;
-
-        // Add hyperlinks for image URLs
-        exportData.forEach((_, rowIndex) => {
-            ['ภาพถ่ายบัตรประจำตัวประชาชน', 'ภาพถ่ายใบขับขี่', 'ภาพถ่ายคู่กับรถ', 'ภาพหน้าตรง'].forEach((column, colIndex) => {
-                const cellRef = XLSX.utils.encode_cell({ r: rowIndex + 1, c: colIndex + Object.keys(exportData[0]).length - 4 });
-                if (exportData[rowIndex][column]) {
-                    worksheet[cellRef] = { t: 's', v: exportData[rowIndex][column], l: { Target: exportData[rowIndex][column], Tooltip: 'Click to view image' } };
-                }
-            });
-        });
-
-        XLSX.writeFile(workbook, 'ข้อมูลพนักงานคนชับ.xlsx');
-    }
+            XLSX.writeFile(workbook, 'ข้อมูลพนักงานคนชับ.xlsx');
+        }
 
         // Populate table on page load
         window.onload = populateDriverTable;
