@@ -23,6 +23,7 @@
             width: 95%;
             max-width: 1200px;
             box-sizing: border-box;
+            overflow-x: auto; /* Allow horizontal scrolling */
         }
         h2 {
             text-align: center;
@@ -47,11 +48,13 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            table-layout: auto; /* Ensure table width adjusts based on content */
         }
         th, td {
             border: 1px solid #ccc;
             padding: 10px;
             text-align: center;
+            word-wrap: break-word; /* Ensure long text wraps properly */
         }
         th {
             background-color: #ff66a3;
@@ -93,6 +96,41 @@
             }
             table, th, td {
                 font-size: 0.8em;
+            }
+        }
+        @media (max-width: 360px) {
+            .container {
+                padding: 8px;
+            }
+            .form-group select {
+                padding: 5px;
+            }
+            table, th, td {
+                font-size: 0.7em;
+            }
+        }
+        @media (min-width: 375px) and (max-width: 667px) {
+            /* Specific styles for Samsung Galaxy S7/S8/S9/S10 */
+            .container {
+                padding: 12px;
+            }
+            .form-group select {
+                padding: 7px;
+            }
+            table, th, td {
+                font-size: 0.85em;
+            }
+        }
+        @media (min-width: 411px) and (max-width: 731px) {
+            /* Specific styles for Samsung Galaxy S8+/S9+/S10+ */
+            .container {
+                padding: 14px;
+            }
+            .form-group select {
+                padding: 9px;
+            }
+            table, th, td {
+                font-size: 0.9em;
             }
         }
     </style>
