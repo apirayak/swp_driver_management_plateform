@@ -14,6 +14,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            padding: 300px 0; /* Increased top and bottom padding */
         }
         .container {
             background-color: white;
@@ -23,6 +24,8 @@
             width: 95%;
             max-width: 1200px;
             box-sizing: border-box;
+            overflow-x: auto; /* Allow horizontal scrolling */
+            overflow-y: auto; /* Allow vertical scrolling if needed */
         }
         h2 {
             text-align: center;
@@ -36,7 +39,9 @@
             font-weight: bold;
             margin-bottom: 5px;
         }
-        .form-group select {
+        .form-group select,
+        .form-group input[type="text"],
+        .form-group textarea {
             width: 100%;
             padding: 10px;
             border-radius: 4px;
@@ -47,30 +52,23 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            table-layout: auto;
+            overflow-x: auto; /* Ensure the table scrolls horizontally if needed */
+            border-spacing: 0; /* Remove spacing to help with sticky positioning */
         }
         th, td {
             border: 1px solid #ccc;
             padding: 10px;
             text-align: center;
+            word-wrap: break-word; /* Ensure long text wraps properly */
         }
         th {
             background-color: #ff66a3;
             color: white;
-        }
-        .form-group input[type="text"] {
-            width: 100%;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-            resize: vertical;
+            position: -webkit-sticky; /* For Safari */
+            position: sticky;
+            top: 0; /* Stick to the top */
+            z-index: 1; /* Ensure it stays above table content */
         }
         .buttons {
             display: flex;
@@ -92,6 +90,7 @@
             .container {
                 padding: 15px;
             }
+            .form-group select,
             .form-group input[type="text"],
             .form-group textarea {
                 padding: 8px;
@@ -104,12 +103,41 @@
             .container {
                 padding: 10px;
             }
+            .form-group select,
             .form-group input[type="text"],
             .form-group textarea {
                 padding: 6px;
             }
             table, th, td {
                 font-size: 0.8em;
+            }
+        }
+        @media (max-width: 360px) {
+            .container {
+                padding: 8px;
+            }
+            .form-group select,
+            .form-group input[type="text"],
+            .form-group textarea {
+                padding: 5px;
+            }
+            table, th, td {
+                font-size: 0.75em;
+                padding: 5px;
+            }
+        }
+        @media (max-width: 320px) {
+            .container {
+                padding: 5px;
+            }
+            .form-group select,
+            .form-group input[type="text"],
+            .form-group textarea {
+                padding: 4px;
+            }
+            table, th, td {
+                font-size: 0.7em;
+                padding: 4px;
             }
         }
     </style>

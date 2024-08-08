@@ -57,9 +57,13 @@
             background-color: #ff66a3;
             color: white;
         }
+        .hidden-column {
+            display: none;
+        }
         .buttons {
             display: flex;
             justify-content: space-between;
+            flex-wrap: wrap;
         }
         .buttons button {
             background-color: #ff66a3;
@@ -69,6 +73,7 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 1em;
+            margin: 5px;
         }
         .buttons button:hover {
             background-color: #ff3385;
@@ -80,6 +85,10 @@
             table, th, td {
                 font-size: 0.9em;
             }
+            .buttons button {
+                font-size: 0.9em;
+                padding: 8px 16px;
+            }
         }
         @media (max-width: 480px) {
             .container {
@@ -87,6 +96,10 @@
             }
             table, th, td {
                 font-size: 0.8em;
+            }
+            .buttons button {
+                font-size: 0.8em;
+                padding: 6px 12px;
             }
         }
     </style>
@@ -133,9 +146,15 @@
             <table id="mileTable">
                 <thead>
                     <tr>
+                        <th>วันที่</th>
                         <th>ทะเบียนรถ</th>
                         <th>เลขไมล์</th>
                         <th>รายละเอียด</th>
+                        <th class="hidden-column">ภาพถ่ายเลขไมล์</th>
+                        <th class="hidden-column">ภาพถ่ายด้านหน้า</th>
+                        <th class="hidden-column">ภาพถ่ายด้านหลัง</th>
+                        <th class="hidden-column">ภาพถ่ายด้านซ้าย</th>
+                        <th class="hidden-column">ภาพถ่ายด้านขวา</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -144,7 +163,7 @@
             </table>
             <div class="buttons">
                 <button type="button" onclick="downloadData()">ดาวน์โหลดข้อมูล</button>
-                <button type="button" onclick="viewDetails()">ดูรายละเอียด</button>
+                <!-- Keep the viewDetails button in the HTML -->
             </div>
         </div>
     </div>
@@ -170,30 +189,56 @@
             }
         }
 
+        function formatDate(date, month, year) {
+            return `${date}/${month}/${year}`;
+        }
+
+        function parseDate(dateStr) {
+            const [range, month, year] = dateStr.split('/');
+            const [startDay, endDay] = range.split('-').map(Number);
+            return { startDay, endDay, month, year };
+        }
+
+        function filterData(dateRange, month, year) {
+            const { startDay, endDay } = parseDate(dateRange);
+            
+            // Example data to simulate filtering
+            const allData = [
+                { date: formatDate('1-15', '09', '2024'), regNumber: 'ABC123', mileage: '12345 km', mileImage: 'mile1.jpg', frontImage: 'front1.jpg', rearImage: 'rear1.jpg', leftImage: 'left1.jpg', rightImage: 'right1.jpg' },
+                { date: formatDate('16-28', '02', '2025'), regNumber: 'XYZ789', mileage: '67890 km', mileImage: 'mile2.jpg', frontImage: 'front2.jpg', rearImage: 'rear2.jpg', leftImage: 'left2.jpg', rightImage: 'right2.jpg' },
+                { date: formatDate('16-30', '04', '2024'), regNumber: 'LMN456', mileage: '54321 km', mileImage: 'mile3.jpg', frontImage: 'front3.jpg', rearImage: 'rear3.jpg', leftImage: 'left3.jpg', rightImage: 'right3.jpg' },
+                { date: formatDate('1-15', '04', '2024'), regNumber: 'DEF789', mileage: '98765 km', mileImage: 'mile4.jpg', frontImage: 'front4.jpg', rearImage: 'rear4.jpg', leftImage: 'left4.jpg', rightImage: 'right4.jpg' }
+            ];
+
+            return allData.filter(data => {
+                const { startDay: dataStart, endDay: dataEnd, month: dataMonth, year: dataYear } = parseDate(data.date);
+                return dataMonth === month && dataYear === year && ((startDay <= dataEnd && endDay >= dataStart));
+            });
+        }
+
         function confirmSelection() {
             const dateRange = document.getElementById('dateRange').value;
             const month = document.getElementById('month').value;
             const year = document.getElementById('year').value;
 
-            // Show results based on selected filters
-            // Here you would fetch and display data from your database
-            // For now, we'll just simulate data
-
+            // Filter data based on selected filters
+            const filteredData = filterData(dateRange, month, year);
+            
             const tableBody = document.querySelector('#mileTable tbody');
             tableBody.innerHTML = ''; // Clear existing rows
 
-            // Simulated data
-            const simulatedData = [
-                { regNumber: 'ABC123', mileage: '12345 km' },
-                { regNumber: 'XYZ789', mileage: '67890 km' }
-            ];
-
-            simulatedData.forEach(data => {
+            filteredData.forEach(item => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${data.regNumber}</td>
-                    <td>${data.mileage}</td>
-                    <td><button onclick="viewDetails('${data.regNumber}')">ดูรายละเอียด</button></td>
+                    <td>${item.date}</td>
+                    <td>${item.regNumber}</td>
+                    <td>${item.mileage}</td>
+                    <td><button onclick="viewDetails('${item.regNumber}')">ดูรายละเอียด</button></td>
+                    <td class="hidden-column"><img src="${item.mileImage}" alt="เลขไมล์" style="width: 100px;"></td>
+                    <td class="hidden-column"><img src="${item.frontImage}" alt="ด้านหน้า" style="width: 100px;"></td>
+                    <td class="hidden-column"><img src="${item.rearImage}" alt="ด้านหลัง" style="width: 100px;"></td>
+                    <td class="hidden-column"><img src="${item.leftImage}" alt="ด้านซ้าย" style="width: 100px;"></td>
+                    <td class="hidden-column"><img src="${item.rightImage}" alt="ด้านขวา" style="width: 100px;"></td>
                 `;
                 tableBody.appendChild(row);
             });
@@ -201,48 +246,23 @@
             document.getElementById('resultsContainer').style.display = 'block';
         }
 
-        function downloadData() {
-            const dateRange = document.getElementById('dateRange').value;
-            const month = document.getElementById('month').value;
-            const year = document.getElementById('year').value;
-
-            // Collect table data
-            const table = document.getElementById('mileTable');
-            const rows = Array.from(table.querySelectorAll('tbody tr'));
-
-            // Create a workbook and a worksheet
-            const wb = XLSX.utils.book_new();
-            const wsData = [['ช่วงวันที่', 'เดือน', 'ปี', 'ทะเบียนรถ', 'เลขไมล์']];
-
-            rows.forEach(row => {
-                const cells = Array.from(row.querySelectorAll('td'));
-                const regNumber = cells[0].textContent;
-                const mileage = cells[1].textContent;
-                wsData.push([dateRange, month, year, regNumber, mileage]);
-            });
-
-            const ws = XLSX.utils.aoa_to_sheet(wsData);
-            XLSX.utils.book_append_sheet(wb, ws, 'Mileage Data');
-
-            // Generate a file name
-            const fileName = `mileUpdate_${month}_${year}_${dateRange}.xlsx`;
-
-            // Write the workbook to a file
-            XLSX.writeFile(wb, fileName);
-        }
-
         function viewDetails(regNumber) {
-            // Redirect to the details page with the regNumber as a query parameter
-            window.location.href = `mileDetails.html?regNumber=${regNumber}`;
+            window.location.href = `mileDetails.html?regNumber=${encodeURIComponent(regNumber)}`;
         }
 
-        // Initialize date ranges with default values
-        window.onload = () => {
-            updateDateRanges();
-        };
+        function downloadData() {
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.table_to_sheet(document.getElementById('mileTable'));
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+            XLSX.writeFile(wb, 'mileData.xlsx');
+        }
 
-        // Update date ranges when month is changed
+        // Update date ranges when the month changes
         document.getElementById('month').addEventListener('change', updateDateRanges);
+        document.getElementById('year').addEventListener('change', updateDateRanges);
+
+        // Initialize date ranges
+        updateDateRanges();
     </script>
 </body>
 </html>

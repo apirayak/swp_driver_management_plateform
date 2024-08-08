@@ -23,6 +23,7 @@
             width: 95%;
             max-width: 1200px;
             box-sizing: border-box;
+            overflow-x: auto; /* Allows horizontal scrolling */
         }
         h2 {
             text-align: center;
@@ -30,6 +31,7 @@
         }
         .header-group {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             margin-bottom: 20px;
         }
@@ -54,11 +56,13 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            table-layout: auto; /* Allows table to adapt to content */
         }
         th, td {
             border: 1px solid #ccc;
             padding: 10px;
             text-align: center;
+            word-wrap: break-word; /* Ensures long text wraps properly */
         }
         th {
             background-color: #ff66a3;
@@ -66,7 +70,9 @@
         }
         .buttons {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
+            gap: 10px;
         }
         .buttons button {
             background-color: #ff66a3;
@@ -76,6 +82,7 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 1em;
+            flex: 1;
         }
         .buttons button:hover {
             background-color: #ff3385;
@@ -88,6 +95,27 @@
                 margin-right: 0;
                 margin-bottom: 10px;
             }
+            .buttons {
+                flex-direction: column;
+            }
+            table {
+                font-size: 0.9em; /* Adjust font size for smaller screens */
+            }
+        }
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 10px;
+                box-shadow: none;
+            }
+            .buttons button {
+                padding: 8px 16px;
+            }
+            table {
+                font-size: 0.8em; /* Further adjust font size for very small screens */
+            }
         }
     </style>
 </head>
@@ -98,11 +126,7 @@
             <div class="form-group">
                 <label for="dateRange">เลือกช่วงวันที่</label>
                 <select id="dateRange" name="dateRange">
-                    <option value="01-15">1-15</option>
-                    <option value="16-28">16-28</option>
-                    <option value="16-29">16-29</option>
-                    <option value="16-30">16-30</option>
-                    <option value="16-31">16-31</option>
+                    <!-- Options will be dynamically populated -->
                 </select>
             </div>
             <div class="form-group">
@@ -131,45 +155,46 @@
             </div>
         </div>
         <form id="mileUpdateForm">
-            <table id="dataTable">
-                <thead>
-                    <tr>
-                        <th>รายละเอียด</th>
-                        <th>ข้อมูล</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Single row for each date range with input fields -->
-                    <tr>
-                        <td>ทะเบียนรถ</td>
-                        <td><input type="text" id="carRegistration" name="carRegistration" readonly></td>
-                    </tr>
-                    <tr>
-                        <td>เลขไมล์</td>
-                        <td><input type="text" name="mile" pattern="\d*" required></td>
-                    </tr>
-                    <tr>
-                        <td>ภาพถ่ายเลขไมล์</td>
-                        <td><input type="file" name="mileImage" accept="image/*" capture="environment"></td>
-                    </tr>
-                    <tr>
-                        <td>ภาพถ่ายด้านหน้า</td>
-                        <td><input type="file" name="frontImage" accept="image/*" capture="environment"></td>
-                    </tr>
-                    <tr>
-                        <td>ภาพถ่ายด้านหลัง</td>
-                        <td><input type="file" name="backImage" accept="image/*" capture="environment"></td>
-                    </tr>
-                    <tr>
-                        <td>ภาพถ่ายด้านซ้าย</td>
-                        <td><input type="file" name="leftImage" accept="image/*" capture="environment"></td>
-                    </tr>
-                    <tr>
-                        <td>ภาพถ่ายด้านขวา</td>
-                        <td><input type="file" name="rightImage" accept="image/*" capture="environment"></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div style="overflow-x: auto;">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>รายละเอียด</th>
+                            <th>ข้อมูล</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ทะเบียนรถ</td>
+                            <td><input type="text" id="carRegistration" name="carRegistration" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>เลขไมล์</td>
+                            <td><input type="text" name="mile" pattern="\d*" required></td>
+                        </tr>
+                        <tr>
+                            <td>ภาพถ่ายเลขไมล์</td>
+                            <td><input type="file" name="mileImage" accept="image/*" capture="environment"></td>
+                        </tr>
+                        <tr>
+                            <td>ภาพถ่ายด้านหน้า</td>
+                            <td><input type="file" name="frontImage" accept="image/*" capture="environment"></td>
+                        </tr>
+                        <tr>
+                            <td>ภาพถ่ายด้านหลัง</td>
+                            <td><input type="file" name="backImage" accept="image/*" capture="environment"></td>
+                        </tr>
+                        <tr>
+                            <td>ภาพถ่ายด้านซ้าย</td>
+                            <td><input type="file" name="leftImage" accept="image/*" capture="environment"></td>
+                        </tr>
+                        <tr>
+                            <td>ภาพถ่ายด้านขวา</td>
+                            <td><input type="file" name="rightImage" accept="image/*" capture="environment"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <div class="buttons">
                 <button type="button" onclick="editForm()">แก้ไข</button>
                 <button type="submit">ส่งข้อมูล</button>
@@ -214,32 +239,25 @@
             const month = document.getElementById('month').value;
             const year = document.getElementById('year').value;
 
-            // Example of logging the selected options
             console.log(`Selected Date Range: ${dateRange}, Month: ${month}, Year: ${year}`);
         }
 
         document.getElementById('mileUpdateForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            // Handle form submission here
             alert('ข้อมูลถูกส่งเรียบร้อยแล้ว');
         });
 
         function editForm() {
             alert('Form is now editable');
-            // Add functionality to make the form editable if needed
         }
 
-        // Initialize table with default values
         window.onload = () => {
             updateDateRange();
             populateCarRegistration();
         };
 
         function populateCarRegistration() {
-            // Fetch the car registration from driverinfo.html or an API call
-            const carRegistration = "กข-1234";  // Replace this with the actual value fetched
-
-            // Set the car registration value
+            const carRegistration = "กข-1234";
             document.getElementById('carRegistration').value = carRegistration;
         }
     </script>
