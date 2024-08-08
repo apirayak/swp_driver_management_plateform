@@ -13,13 +13,7 @@ from django.db import models
 
 
 class Role(models.Model):
-    ROLE_CHOICES = (
-        ("driver", "Driver"),
-        ("operator", "Operator"),
-        ("admin", "Admin"),
-    )
-
-    role_name = models.CharField(choices=ROLE_CHOICES, max_length=20)
+    role_name = models.CharField(max_length=20, unique=True)
     role_description = models.TextField(null=True, blank=True)
     created_date = models.DateTimeField(
         verbose_name=("created_date"),
@@ -35,7 +29,7 @@ class Role(models.Model):
     )
 
     def __str__(self):
-        return self.get_role_name_display()
+        return self.role_name
 
 
 class Warehouse(models.Model):
@@ -116,38 +110,65 @@ class User(AbstractBaseUser, PermissionsMixin):
         return str(self.username) or f"User info {self.username}"
 
 
+class Bank(models.Model):
+    bank_code = models.CharField(max_length=255, unique=True)
+    bank_name_th = models.CharField(max_length=255, null=True, blank=True)
+    bank_name_eng = models.CharField(max_length=255, null=True, blank=True)
+
+    created_date = models.DateTimeField(
+        verbose_name=("created_date"),
+        null=True,
+        blank=False,
+        auto_now_add=True,
+    )
+    last_updated_date = models.DateTimeField(
+        verbose_name=("last_updated_date"),
+        null=True,
+        blank=False,
+        auto_now=True,
+    )
+
+    def __str__(self):
+        return self.bank_code
+
+
 class DriverProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     warehouse = models.ForeignKey(
-        Warehouse, null=True, blank=True, on_delete=models.CASCADE
+        Warehouse, null=True, blank=True, on_delete=models.SET_NULL
+    )
+    bank = models.ForeignKey(
+        Bank, null=True, blank=True, on_delete=models.SET_NULL
     )
     id_card_number = models.TextField(null=True, blank=True)
-    address = models.TextField(null=True, blank=True)
+    id_card_address = models.TextField(null=True, blank=True)
+    current_address = models.TextField(null=True, blank=True)
     phone_number = models.TextField(null=True, blank=True)
+    bank_name = models.TextField(null=True, blank=True)
     bank_account = models.TextField(null=True, blank=True)
     car_license = models.TextField(null=True, blank=True)
     id_card_image = models.ImageField(
         null=True,
         blank=True,
-        upload_to="image_upload/user_info",
+        upload_to="driver_info/",
         max_length=511,
     )
     driver_license = models.ImageField(
         null=True,
         blank=True,
-        upload_to="image_upload/user_info",
+        upload_to="driver_info/",
         max_length=511,
     )
     photo_with_card = models.ImageField(
         null=True,
         blank=True,
-        upload_to="image_upload/user_info",
+        upload_to="driver_info/",
         max_length=511,
     )
     profile_photo = models.ImageField(
         null=True,
         blank=True,
-        upload_to="image_upload/user_info",
+        upload_to="driver_info/",
         max_length=511,
     )
     created_date = models.DateTimeField(

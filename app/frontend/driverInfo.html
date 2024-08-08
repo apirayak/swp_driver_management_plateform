@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +16,7 @@
             height: 100vh;
             margin: 0;
         }
+
         .container {
             background-color: white;
             border-radius: 8px;
@@ -24,18 +26,22 @@
             max-width: 600px;
             box-sizing: border-box;
         }
+
         h2 {
             text-align: center;
             color: #ff66a3;
         }
+
         .info-group {
             margin-bottom: 15px;
         }
+
         .info-group label {
             display: block;
             font-weight: bold;
             margin-bottom: 5px;
         }
+
         .info-group span {
             display: block;
             background-color: #f2f2f2;
@@ -43,96 +49,110 @@
             border-radius: 4px;
             border: 1px solid #ccc;
         }
+
         .image-group img {
             max-width: 100%;
             border-radius: 8px;
             margin-bottom: 10px;
         }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
             }
+
             .info-group span {
                 padding: 8px;
             }
         }
+
         @media (max-width: 480px) {
             .container {
                 padding: 10px;
             }
+
             .info-group span {
                 padding: 6px;
             }
         }
+
         /* Samsung Galaxy S8/S9/S10/S20, Note 8/9/10/20, etc. */
         @media only screen and (max-device-width: 360px) {
             .container {
                 padding: 8px;
             }
+
             .info-group span {
                 padding: 5px;
             }
+
             h2 {
                 font-size: 1.5em;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Driver Information</h2>
+        {% if driver_profile %}
         <div class="info-group">
             <label>ชื่อ</label>
-            <span id="firstName">สมชาย</span>
+            <span>{{ driver_profile.user.first_name }}</span>
         </div>
         <div class="info-group">
             <label>นามสกุล</label>
-            <span id="lastName">ใจดี</span>
+            <span>{{ driver_profile.user.last_name }}</span>
         </div>
         <div class="info-group">
             <label>คลัง</label>
-            <span id="warehouse">บางนา</span>
+            <span>{{ driver_profile.warehouse.warehouse_name }}</span>
         </div>
         <div class="info-group">
             <label>ทะเบียนรถ</label>
-            <span id="carRegistration">กข-1234</span>
+            <span>{{ driver_profile.car_license }}</span>
         </div>
         <div class="info-group">
             <label>เลขบัตรประจำตัวประชาชน</label>
-            <span id="idNumber">1234567890123</span>
+            <span>{{ driver_profile.id_card_number }}</span>
         </div>
         <div class="info-group">
             <label>ที่อยู่ตามบัตรประชาชน</label>
-            <span id="idAddress">123 หมู่ 4 ตำบลหนองบัว อำเภอเมือง จังหวัดลำปาง</span>
+            <span>{{ driver_profile.id_card_address }}</span>
         </div>
         <div class="info-group">
             <label>ที่อยู่ปัจจุบัน</label>
-            <span id="currentAddress">456 ซอยสุขุมวิท 71 แขวงพระโขนงเหนือ เขตวัฒนา กรุงเทพมหานคร</span>
+            <span>{{ driver_profile.current_address }}</span>
         </div>
         <div class="info-group">
             <label>ธนาคาร</label>
-            <span id="bank">กรุงเทพ</span>
+            <span>{{ driver_profile.bank }}</span>
         </div>
         <div class="info-group">
             <label>เลขบัญชีธนาคาร</label>
-            <span id="bankAccountNumber">123-4-56789-0</span>
+            <span>{{ driver_profile.bank_account }}</span>
         </div>
         <div class="image-group">
             <label>ภาพบัตรประชาชน</label>
-            <img id="idCardImage" src="path/to/idcard.jpg" alt="ID Card">
+            <a href="{{ driver_profile.id_card_image.url }}" target="_blank">Click to view ID Card</a>
         </div>
         <div class="image-group">
             <label>ภาพใบขับขี่</label>
-            <img id="driverLicenseImage" src="path/to/driverlicense.jpg" alt="Driver License">
+            <a href="{{ driver_profile.driver_license.url }}" target="_blank">Click to view Driver License</a>
         </div>
         <div class="image-group">
             <label>ภาพถ่ายคู่กับรถ</label>
-            <img id="carPhotoImage" src="path/to/carphoto.jpg" alt="Photo with Car">
+            <a href="{{ driver_profile.photo_with_card.url }}" target="_blank">Click to view Photo with Car</a>
         </div>
         <div class="image-group">
             <label>ภาพหน้าตรง</label>
-            <img id="profilePhotoImage" src="path/to/profilephoto.jpg" alt="Profile Photo">
+            <a href="{{ driver_profile.profile_photo.url }}" target="_blank">Click to view Profile Photo</a>
         </div>
+
+        {% else %}
+        <p>No driver profile found.</p>
+        {% endif %}
     </div>
 
     <script>
@@ -160,4 +180,5 @@
         //     });
     </script>
 </body>
+
 </html>

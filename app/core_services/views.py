@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from .models import DriverProfile
 
 
 def login_view(request):
@@ -11,7 +13,12 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            if user.role.role_name == "operator":
+            # Check user role and redirect accordingly
+            if user.role.role_name == "driver":
+                return redirect(
+                    "driver_dashboard"
+                )  # Update with your actual view name
+            elif user.role.role_name == "operator":
                 return redirect(
                     "operator_menu"
                 )  # Update with your actual view name
@@ -27,3 +34,32 @@ def login_view(request):
             )
 
     return render(request, "login.html")
+
+
+@login_required
+def driver_dashboard_view(request):
+    return render(request, "driver_dashboard.html")
+
+
+@login_required
+def job_running_view(request):
+    return render(request, "jobRunning.html")
+
+
+@login_required
+def mile_update_view(request):
+    return render(request, "mileUpdate.html")
+
+
+@login_required
+def driver_info_view(request):
+    # Fetch the driver profile for the logged-in user
+    try:
+        driver_profile = DriverProfile.objects.get(user=request.user)
+    except DriverProfile.DoesNotExist:
+        # Handle case where profile doesn't exist
+        driver_profile = None
+
+    return render(
+        request, "driverInfo.html", {"driver_profile": driver_profile}
+    )

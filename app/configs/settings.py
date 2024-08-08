@@ -32,9 +32,19 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = "core_services.User"
 
-LOGIN_URL = "/login/"  # URL to redirect users if they are not logged in
-LOGIN_REDIRECT_URL = "/"  # URL to redirect users after successful login
-LOGOUT_REDIRECT_URL = "/"  # URL to redirect users after logout
+# settings.py
+# LOGIN_REDIRECT_URL = "/dashboard/"  # Adjust as needed
+
+# LOGIN_URL = "/login/"  # URL to redirect users if they are not logged in
+# LOGIN_REDIRECT_URL = "/"  # URL to redirect users after successful login
+# LOGOUT_REDIRECT_URL = "/login/"  # URL to redirect users after logout
+
+# CSRF_COOKIE_SECURE = True  # Use this only if you're using HTTPS
+# SESSION_COOKIE_SECURE = True  # Use this only if you're using HTTPS
+
+# settings.py
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Application definition
 

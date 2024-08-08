@@ -6,7 +6,14 @@ from .models import (
     OperatorProfile,
     AdminProfile,
     Warehouse,
+    Bank,
 )
+
+
+@admin.register(Bank)
+class BankAdmin(admin.ModelAdmin):
+    list_display = ("bank_code", "bank_name_th", "bank_name_eng")
+    search_fields = ("bank_code", "bank_name_th", "bank_name_eng")
 
 
 class DriverProfileInline(admin.StackedInline):
