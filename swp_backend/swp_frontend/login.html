@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +16,7 @@
             height: 100vh;
             margin: 0;
         }
+
         .container {
             background-color: white;
             border-radius: 8px;
@@ -24,18 +26,22 @@
             max-width: 400px;
             box-sizing: border-box;
         }
+
         h2 {
             text-align: center;
             color: #ff66a3;
         }
+
         .form-group {
             margin-bottom: 15px;
         }
+
         .form-group label {
             display: block;
             font-weight: bold;
             margin-bottom: 5px;
         }
+
         .form-group input {
             width: 100%;
             padding: 10px;
@@ -43,10 +49,12 @@
             border: 1px solid #ccc;
             box-sizing: border-box;
         }
+
         .buttons {
             display: flex;
             justify-content: center;
         }
+
         .buttons button {
             background-color: #ff66a3;
             color: white;
@@ -56,56 +64,70 @@
             cursor: pointer;
             font-size: 1em;
         }
+
         .buttons button:hover {
             background-color: #ff3385;
         }
+
         .error {
             color: red;
             text-align: center;
         }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
             }
+
             .form-group input {
                 padding: 8px;
             }
+
             .buttons button {
                 padding: 8px 15px;
                 font-size: 0.9em;
             }
         }
+
         @media (max-width: 480px) {
             .container {
                 padding: 10px;
             }
+
             .form-group input {
                 padding: 6px;
             }
+
             .buttons button {
                 padding: 6px 12px;
                 font-size: 0.85em;
             }
         }
+
         @media (max-width: 360px) {
             .container {
                 padding: 8px;
             }
+
             .form-group input {
                 padding: 5px;
             }
+
             .buttons button {
                 padding: 5px 10px;
                 font-size: 0.8em;
             }
         }
+
         @media (max-width: 320px) {
             .container {
                 padding: 5px;
             }
+
             .form-group input {
                 padding: 4px;
             }
+
             .buttons button {
                 padding: 4px 8px;
                 font-size: 0.75em;
@@ -113,11 +135,15 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Login</h2>
-        <div class="error" id="loginError"></div>
-        <form id="loginForm">
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+        <form id="loginForm" method="post" action="{% url 'login' %}">
+            {% csrf_token %}
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required>
@@ -131,8 +157,8 @@
             </div>
         </form>
     </div>
-    
-    <script>
+
+    <!-- <script>
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const username = document.getElementById('username').value;
@@ -147,6 +173,7 @@
                 loginError.textContent = 'Invalid username or password.';
             }
         });
-    </script>
+    </script> -->
 </body>
+
 </html>

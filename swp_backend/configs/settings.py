@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,10 +30,16 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = "driver_app.User"
+
+LOGIN_URL = "/login/"  # URL to redirect users if they are not logged in
+LOGIN_REDIRECT_URL = "/"  # URL to redirect users after successful login
+LOGOUT_REDIRECT_URL = "/"  # URL to redirect users after logout
 
 # Application definition
 
 INSTALLED_APPS = [
+    "driver_app",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -56,7 +63,7 @@ ROOT_URLCONF = "configs.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "swp_frontend")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
