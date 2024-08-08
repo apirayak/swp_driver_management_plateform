@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>การอัพเดทเลขไมล์</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffe6f2;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 95%;
+            max-width: 1200px;
+            box-sizing: border-box;
+        }
+        h2 {
+            text-align: center;
+            color: #ff66a3;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #ff66a3;
+            color: white;
+        }
+        .hidden-column {
+            display: none;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .buttons button {
+            background-color: #ff66a3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+        }
+        .buttons button:hover {
+            background-color: #ff3385;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            table, th, td {
+                font-size: 0.9em;
+            }
+            .buttons button {
+                font-size: 0.9em;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            table, th, td {
+                font-size: 0.8em;
+            }
+            .buttons button {
+                font-size: 0.8em;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>การอัพเดทเลขไมล์</h2>
+        <div class="form-group">
+            <label for="dateRange">เลือกช่วงวันที่</label>
+            <select id="dateRange" name="dateRange">
+                <!-- Date ranges will be populated dynamically -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="month">เลือกเดือน</label>
+            <select id="month" name="month">
+                <option value="01">มกราคม</option>
+                <option value="02">กุมภาพันธ์</option>
+                <option value="03">มีนาคม</option>
+                <option value="04">เมษายน</option>
+                <option value="05">พฤษภาคม</option>
+                <option value="06">มิถุนายน</option>
+                <option value="07">กรกฎาคม</option>
+                <option value="08">สิงหาคม</option>
+                <option value="09">กันยายน</option>
+                <option value="10">ตุลาคม</option>
+                <option value="11">พฤศจิกายน</option>
+                <option value="12">ธันวาคม</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="year">เลือกปี</label>
+            <select id="year" name="year">
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <!-- Add more years as needed -->
+            </select>
+        </div>
+        <div class="buttons">
+            <button type="button" onclick="confirmSelection()">ยืนยัน</button>
+        </div>
+        <div id="resultsContainer" style="display: none;">
+            <table id="mileTable">
+                <thead>
+                    <tr>
+                        <th>วันที่</th>
+                        <th>ทะเบียนรถ</th>
+                        <th>เลขไมล์</th>
+                        <th>รายละเอียด</th>
+                        <th class="hidden-column">ภาพถ่ายเลขไมล์</th>
+                        <th class="hidden-column">ภาพถ่ายด้านหน้า</th>
+                        <th class="hidden-column">ภาพถ่ายด้านหลัง</th>
+                        <th class="hidden-column">ภาพถ่ายด้านซ้าย</th>
+                        <th class="hidden-column">ภาพถ่ายด้านขวา</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be generated here by JavaScript -->
+                </tbody>
+            </table>
+            <div class="buttons">
+                <button type="button" onclick="downloadData()">ดาวน์โหลดข้อมูล</button>
+                <!-- Keep the viewDetails button in the HTML -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.sheetjs.com/xlsx-latest/xlsx.full.min.js"></script>
+    <script>
+        const daysInMonth = {
+            '01': 31, '02': 28, '03': 31, '04': 30, '05': 31, '06': 30,
+            '07': 31, '08': 31, '09': 30, '10': 31, '11': 30, '12': 31
+        };
+
+        function updateDateRanges() {
+            const month = document.getElementById('month').value;
+            const dateRangeSelect = document.getElementById('dateRange');
+            const numDays = daysInMonth[month];
+
+            dateRangeSelect.innerHTML = ''; // Clear existing options
+
+            // Populate date ranges based on the number of days in the selected month
+            dateRangeSelect.add(new Option('1-15', '1-15'));
+            if (numDays > 15) {
+                dateRangeSelect.add(new Option('16-' + numDays, '16-' + numDays));
+            }
+        }
+
+        function formatDate(date, month, year) {
+            return `${date}/${month}/${year}`;
+        }
+
+        function parseDate(dateStr) {
+            const [range, month, year] = dateStr.split('/');
+            const [startDay, endDay] = range.split('-').map(Number);
+            return { startDay, endDay, month, year };
+        }
+
+        function filterData(dateRange, month, year) {
+            const { startDay, endDay } = parseDate(dateRange);
+            
+            // Example data to simulate filtering
+            const allData = [
+                { date: formatDate('1-15', '09', '2024'), regNumber: 'ABC123', mileage: '12345 km', mileImage: 'mile1.jpg', frontImage: 'front1.jpg', rearImage: 'rear1.jpg', leftImage: 'left1.jpg', rightImage: 'right1.jpg' },
+                { date: formatDate('16-28', '02', '2025'), regNumber: 'XYZ789', mileage: '67890 km', mileImage: 'mile2.jpg', frontImage: 'front2.jpg', rearImage: 'rear2.jpg', leftImage: 'left2.jpg', rightImage: 'right2.jpg' },
+                { date: formatDate('16-30', '04', '2024'), regNumber: 'LMN456', mileage: '54321 km', mileImage: 'mile3.jpg', frontImage: 'front3.jpg', rearImage: 'rear3.jpg', leftImage: 'left3.jpg', rightImage: 'right3.jpg' },
+                { date: formatDate('1-15', '04', '2024'), regNumber: 'DEF789', mileage: '98765 km', mileImage: 'mile4.jpg', frontImage: 'front4.jpg', rearImage: 'rear4.jpg', leftImage: 'left4.jpg', rightImage: 'right4.jpg' }
+            ];
+
+            return allData.filter(data => {
+                const { startDay: dataStart, endDay: dataEnd, month: dataMonth, year: dataYear } = parseDate(data.date);
+                return dataMonth === month && dataYear === year && ((startDay <= dataEnd && endDay >= dataStart));
+            });
+        }
+
+        function confirmSelection() {
+            const dateRange = document.getElementById('dateRange').value;
+            const month = document.getElementById('month').value;
+            const year = document.getElementById('year').value;
+
+            // Filter data based on selected filters
+            const filteredData = filterData(dateRange, month, year);
+            
+            const tableBody = document.querySelector('#mileTable tbody');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            filteredData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.date}</td>
+                    <td>${item.regNumber}</td>
+                    <td>${item.mileage}</td>
+                    <td><button onclick="viewDetails('${item.regNumber}')">ดูรายละเอียด</button></td>
+                    <td class="hidden-column"><img src="${item.mileImage}" alt="เลขไมล์" style="width: 100px;"></td>
+                    <td class="hidden-column"><img src="${item.frontImage}" alt="ด้านหน้า" style="width: 100px;"></td>
+                    <td class="hidden-column"><img src="${item.rearImage}" alt="ด้านหลัง" style="width: 100px;"></td>
+                    <td class="hidden-column"><img src="${item.leftImage}" alt="ด้านซ้าย" style="width: 100px;"></td>
+                    <td class="hidden-column"><img src="${item.rightImage}" alt="ด้านขวา" style="width: 100px;"></td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            document.getElementById('resultsContainer').style.display = 'block';
+        }
+
+        function viewDetails(regNumber) {
+            window.location.href = `mileDetails.html?regNumber=${encodeURIComponent(regNumber)}`;
+        }
+
+        function downloadData() {
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.table_to_sheet(document.getElementById('mileTable'));
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+            XLSX.writeFile(wb, 'mileData.xlsx');
+        }
+
+        // Update date ranges when the month changes
+        document.getElementById('month').addEventListener('change', updateDateRanges);
+        document.getElementById('year').addEventListener('change', updateDateRanges);
+
+        // Initialize date ranges
+        updateDateRanges();
+    </script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffe6f2;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+            box-sizing: border-box;
+        }
+        h2 {
+            text-align: center;
+            color: #ff66a3;
+        }
+        .info-group {
+            margin-bottom: 15px;
+        }
+        .info-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .info-group span {
+            display: block;
+            background-color: #f2f2f2;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        .image-group img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .info-group span {
+                padding: 8px;
+            }
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            .info-group span {
+                padding: 6px;
+            }
+        }
+        /* Samsung Galaxy S8/S9/S10/S20, Note 8/9/10/20, etc. */
+        @media only screen and (max-device-width: 360px) {
+            .container {
+                padding: 8px;
+            }
+            .info-group span {
+                padding: 5px;
+            }
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Driver Information</h2>
+        <div class="info-group">
+            <label>ชื่อ</label>
+            <span id="firstName">สมชาย</span>
+        </div>
+        <div class="info-group">
+            <label>นามสกุล</label>
+            <span id="lastName">ใจดี</span>
+        </div>
+        <div class="info-group">
+            <label>คลัง</label>
+            <span id="warehouse">บางนา</span>
+        </div>
+        <div class="info-group">
+            <label>ทะเบียนรถ</label>
+            <span id="carRegistration">กข-1234</span>
+        </div>
+        <div class="info-group">
+            <label>เลขบัตรประจำตัวประชาชน</label>
+            <span id="idNumber">1234567890123</span>
+        </div>
+        <div class="info-group">
+            <label>ที่อยู่ตามบัตรประชาชน</label>
+            <span id="idAddress">123 หมู่ 4 ตำบลหนองบัว อำเภอเมือง จังหวัดลำปาง</span>
+        </div>
+        <div class="info-group">
+            <label>ที่อยู่ปัจจุบัน</label>
+            <span id="currentAddress">456 ซอยสุขุมวิท 71 แขวงพระโขนงเหนือ เขตวัฒนา กรุงเทพมหานคร</span>
+        </div>
+        <div class="info-group">
+            <label>ธนาคาร</label>
+            <span id="bank">กรุงเทพ</span>
+        </div>
+        <div class="info-group">
+            <label>เลขบัญชีธนาคาร</label>
+            <span id="bankAccountNumber">123-4-56789-0</span>
+        </div>
+        <div class="image-group">
+            <label>ภาพบัตรประชาชน</label>
+            <img id="idCardImage" src="path/to/idcard.jpg" alt="ID Card">
+        </div>
+        <div class="image-group">
+            <label>ภาพใบขับขี่</label>
+            <img id="driverLicenseImage" src="path/to/driverlicense.jpg" alt="Driver License">
+        </div>
+        <div class="image-group">
+            <label>ภาพถ่ายคู่กับรถ</label>
+            <img id="carPhotoImage" src="path/to/carphoto.jpg" alt="Photo with Car">
+        </div>
+        <div class="image-group">
+            <label>ภาพหน้าตรง</label>
+            <img id="profilePhotoImage" src="path/to/profilephoto.jpg" alt="Profile Photo">
+        </div>
+    </div>
+
+    <script>
+        // This script will be used to fetch data from the backend and update the DOM elements.
+        // For now, we are using static values as an example.
+
+        // Fetch driver data from the backend
+        // Example:
+        // fetch('/api/driver-info')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         document.getElementById('firstName').innerText = data.firstName;
+        //         document.getElementById('lastName').innerText = data.lastName;
+        //         document.getElementById('warehouse').innerText = data.warehouse;
+        //         document.getElementById('carRegistration').innerText = data.carRegistration;
+        //         document.getElementById('idNumber').innerText = data.idNumber;
+        //         document.getElementById('idAddress').innerText = data.idAddress;
+        //         document.getElementById('currentAddress').innerText = data.currentAddress;
+        //         document.getElementById('bank').innerText = data.bank;
+        //         document.getElementById('bankAccountNumber').innerText = data.bankAccountNumber;
+        //         document.getElementById('idCardImage').src = data.idCardImage;
+        //         document.getElementById('driverLicenseImage').src = data.driverLicenseImage;
+        //         document.getElementById('carPhotoImage').src = data.carPhotoImage;
+        //         document.getElementById('profilePhotoImage').src = data.profilePhotoImage;
+        //     });
+    </script>
+</body>
+</html>
