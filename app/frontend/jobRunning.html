@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,8 +15,10 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            padding: 300px 0; /* Increased top and bottom padding */
+            padding: 300px 0;
+            /* Increased top and bottom padding */
         }
+
         .container {
             background-color: white;
             border-radius: 8px;
@@ -24,21 +27,27 @@
             width: 95%;
             max-width: 1200px;
             box-sizing: border-box;
-            overflow-x: auto; /* Allow horizontal scrolling */
-            overflow-y: auto; /* Allow vertical scrolling if needed */
+            overflow-x: auto;
+            /* Allow horizontal scrolling */
+            overflow-y: auto;
+            /* Allow vertical scrolling if needed */
         }
+
         h2 {
             text-align: center;
             color: #ff66a3;
         }
+
         .form-group {
             margin-bottom: 20px;
         }
+
         .form-group label {
             display: block;
             font-weight: bold;
             margin-bottom: 5px;
         }
+
         .form-group select,
         .form-group input[type="text"],
         .form-group textarea {
@@ -48,32 +57,44 @@
             border: 1px solid #ccc;
             box-sizing: border-box;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
             table-layout: auto;
-            overflow-x: auto; /* Ensure the table scrolls horizontally if needed */
-            border-spacing: 0; /* Remove spacing to help with sticky positioning */
+            overflow-x: auto;
+            /* Ensure the table scrolls horizontally if needed */
+            border-spacing: 0;
+            /* Remove spacing to help with sticky positioning */
         }
-        th, td {
+
+        th,
+        td {
             border: 1px solid #ccc;
             padding: 10px;
             text-align: center;
-            word-wrap: break-word; /* Ensure long text wraps properly */
+            word-wrap: break-word;
+            /* Ensure long text wraps properly */
         }
+
         th {
             background-color: #ff66a3;
             color: white;
-            position: -webkit-sticky; /* For Safari */
+            position: -webkit-sticky;
+            /* For Safari */
             position: sticky;
-            top: 0; /* Stick to the top */
-            z-index: 1; /* Ensure it stays above table content */
+            top: 0;
+            /* Stick to the top */
+            z-index: 1;
+            /* Ensure it stays above table content */
         }
+
         .buttons {
             display: flex;
             justify-content: space-between;
         }
+
         .buttons button {
             background-color: #ff66a3;
             color: white;
@@ -83,65 +104,87 @@
             cursor: pointer;
             font-size: 1em;
         }
+
         .buttons button:hover {
             background-color: #ff3385;
         }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
             }
+
             .form-group select,
             .form-group input[type="text"],
             .form-group textarea {
                 padding: 8px;
             }
-            table, th, td {
+
+            table,
+            th,
+            td {
                 font-size: 0.9em;
             }
         }
+
         @media (max-width: 480px) {
             .container {
                 padding: 10px;
             }
+
             .form-group select,
             .form-group input[type="text"],
             .form-group textarea {
                 padding: 6px;
             }
-            table, th, td {
+
+            table,
+            th,
+            td {
                 font-size: 0.8em;
             }
         }
+
         @media (max-width: 360px) {
             .container {
                 padding: 8px;
             }
+
             .form-group select,
             .form-group input[type="text"],
             .form-group textarea {
                 padding: 5px;
             }
-            table, th, td {
+
+            table,
+            th,
+            td {
                 font-size: 0.75em;
                 padding: 5px;
             }
         }
+
         @media (max-width: 320px) {
             .container {
                 padding: 5px;
             }
+
             .form-group select,
             .form-group input[type="text"],
             .form-group textarea {
                 padding: 4px;
             }
-            table, th, td {
+
+            table,
+            th,
+            td {
                 font-size: 0.7em;
                 padding: 4px;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>รอบวิ่งงาน</h2>
@@ -177,7 +220,11 @@
                 <!-- Add more years as needed -->
             </select>
         </div>
-        <form id="jobRunningForm">
+        <form id="jobRunningForm" action="{% url 'submit_job_running' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" id="hiddenMonth" name="month">
+            <input type="hidden" id="hiddenYear" name="year">
+
             <table id="dataTable">
                 <thead>
                     <tr>
@@ -194,6 +241,9 @@
                 <button type="button" onclick="editForm()">แก้ไข</button>
                 <button type="submit">ส่งข้อมูล</button>
             </div>
+            <!-- <span>{{ job_run_data }}</span> -->
+            <script id="jobRunData" type="application/json">{{ job_run_data|safe }}</script>
+
         </form>
     </div>
 
@@ -202,6 +252,8 @@
             '01': 31, '02': 28, '03': 31, '04': 30, '05': 31, '06': 30,
             '07': 31, '08': 31, '09': 30, '10': 31, '11': 30, '12': 31
         };
+        // Parse the job_run_data JSON from the Django context
+        const jobRunData = JSON.parse(document.getElementById('jobRunData').textContent);
 
         function updateDateRanges() {
             const month = document.getElementById('month').value;
@@ -223,40 +275,75 @@
             const month = document.getElementById('month').value;
             const year = document.getElementById('year').value;
 
+            // Set hidden fields for month and year
+            document.getElementById('hiddenMonth').value = month;
+            document.getElementById('hiddenYear').value = year;
+
+
             const tableBody = document.querySelector('#dataTable tbody');
             tableBody.innerHTML = '';
-
             // Adjust row generation based on selected date range
             for (let day = startDate; day <= endDate; day++) {
                 const dateStr = `${String(day).padStart(2, '0')}/${month}/${year}`;
                 const row = document.createElement('tr');
-                
+
                 row.innerHTML = `
                     <td>${dateStr}</td>
-                    <td><input type="text" name="round1_${day}" maxlength="30" pattern="[0-9/]*"></td>
+                    <td><input type="text" name="round_${day}" maxlength="30" pattern="[0-9/]*"></td>
                     <td><textarea name="remarks_${day}"></textarea></td>
                 `;
-                
+
                 tableBody.appendChild(row);
             }
+            // Populate form fields with existing data
+            jobRunData.forEach(job => {
+                const date = new Date(job.fields.date);
+                const day = date.getDate();
+                const roundInput = document.querySelector(`input[name="round_${day}"]`);
+                const remarksTextarea = document.querySelector(`textarea[name="remarks_${day}"]`);
+
+                if (roundInput) {
+                    roundInput.value = job.fields.round_info;
+                    roundInput.disabled = true; // Disable input if data exists
+
+                }
+                if (remarksTextarea) {
+                    remarksTextarea.value = job.fields.remarks;
+                    remarksTextarea.disabled = true; // Disable textarea if data exists
+
+                }
+            });
+
         }
-
-        document.getElementById('jobRunningForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            // Handle form submission here
-            alert('ข้อมูลถูกส่งเรียบร้อยแล้ว');
-        });
-
         function editForm() {
-            alert('Form is now editable');
             // Add functionality to make the form editable if needed
+            const inputs = document.querySelectorAll('#dataTable input, #dataTable textarea');
+            inputs.forEach(input => input.disabled = false);
         }
-
+        function log_data() {
+            console.log(jobRunData)
+        }
         // Initialize date ranges and table with default values
         window.onload = () => {
             updateDateRanges();
             generateTable();
+
+            // Add form submit event listener
+            const form = document.getElementById('jobRunningForm');
+            form.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent default form submission
+                alert('Form is about to be submitted!');
+                form.submit(); // Proceed with the form submission
+            });
         };
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            log_data()
+        });
+
     </script>
+
 </body>
+
 </html>

@@ -7,7 +7,23 @@ from .models import (
     AdminProfile,
     Warehouse,
     Bank,
+    DriverJobRun,
 )
+
+
+@admin.register(DriverJobRun)
+class JobRunAdmin(admin.ModelAdmin):
+    list_display = (
+        "user",
+        "date",
+        "round_info",
+        "remarks",
+        "created_date",
+        "last_updated_date",
+    )
+    search_fields = ("user__username", "round_info", "remarks")
+    list_filter = ("date", "user")
+    ordering = ("-date",)
 
 
 @admin.register(Bank)

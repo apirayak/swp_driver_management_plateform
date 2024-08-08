@@ -144,7 +144,6 @@ class DriverProfile(models.Model):
     id_card_address = models.TextField(null=True, blank=True)
     current_address = models.TextField(null=True, blank=True)
     phone_number = models.TextField(null=True, blank=True)
-    bank_name = models.TextField(null=True, blank=True)
     bank_account = models.TextField(null=True, blank=True)
     car_license = models.TextField(null=True, blank=True)
     id_card_image = models.ImageField(
@@ -208,3 +207,56 @@ class AdminProfile(models.Model):
 
     def __str__(self):
         return f"Admin Profile: {self.user.username}"
+
+
+class DriverJobRun(models.Model):
+    # User who created the job run
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    # Date of the job run
+    date = models.DateField()
+
+    # Round of the job run
+    round_info = models.CharField(max_length=30)
+
+    # Remarks for the job run
+    remarks = models.TextField(blank=True, null=True)
+    created_date = models.DateTimeField(
+        verbose_name=("created_date"),
+        null=True,
+        blank=False,
+        auto_now_add=True,
+    )
+    last_updated_date = models.DateTimeField(
+        verbose_name=("last_updated_date"),
+        null=True,
+        blank=False,
+        auto_now=True,
+    )
+
+    def __str__(self):
+        return f"{self.date} - {self.round_info}"
+
+
+class Mileage(models.Model):
+    vehicle = models.ForeignKey(DriverProfile, on_delete=models.CASCADE)
+    mile = models.PositiveIntegerField()
+    mile_image = models.ImageField(
+        upload_to="mileage_images/", blank=True, null=True
+    )
+    front_image = models.ImageField(
+        upload_to="vehicle_images/front/", blank=True, null=True
+    )
+    back_image = models.ImageField(
+        upload_to="vehicle_images/back/", blank=True, null=True
+    )
+    left_image = models.ImageField(
+        upload_to="vehicle_images/left/", blank=True, null=True
+    )
+    right_image = models.ImageField(
+        upload_to="vehicle_images/right/", blank=True, null=True
+    )
+    update_date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.vehicle.registration_number} - {self.update_date}"

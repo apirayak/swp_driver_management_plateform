@@ -25,6 +25,7 @@ from core_services.views import (
     driver_info_view,
     driver_dashboard_view,
     job_running_view,
+    submit_job_running,
     mile_update_view,
 )
 
@@ -35,8 +36,9 @@ urlpatterns = [
     path(
         "driver-info/", driver_info_view, name="driver_info"
     ),  # Add your actual view for driver info
-    path("driver-dashboard/", driver_dashboard_view, name="driver_dashboard"),
+    path("driver-menu/", driver_dashboard_view, name="driver_dashboard"),
     path("job-running/", job_running_view, name="job_running"),
+    path("submit-job-running/", submit_job_running, name="submit_job_running"),
     path("mile-update/", mile_update_view, name="mile_update"),
 ]
 if settings.DEBUG:
